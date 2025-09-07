@@ -882,9 +882,12 @@ def main():
     # Run server with appropriate transport
     if args.sse:
         mcp.run(transport="sse")
-    else:
-        # Default to StreamableHTTP
+    elif args.streamable_http:
+        # Use StreamableHTTP only when explicitly requested
         mcp.run(transport="streamable-http")
+    else:
+        # Default to stdio transport (faster and more reliable for MCP)
+        mcp.run()
 
 
 if __name__ == "__main__":
