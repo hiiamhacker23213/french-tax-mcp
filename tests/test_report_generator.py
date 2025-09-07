@@ -15,7 +15,7 @@ import os
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from awslabs.french_tax_mcp_server.report_generator import ReportGenerator
+from french_tax_mcp.report_generator import ReportGenerator
 
 
 class TestReportGenerator:
@@ -122,7 +122,7 @@ class TestReportGenerator:
         
         # Test tax deadlines detection
         assert generator._determine_report_type({"deadlines": []}, "Tax Deadlines") == "tax_deadlines"
-        assert generator._determine_report_type({}, "dates limites") == "tax_deadlines"
+        assert generator._determine_report_type({}, "échéances fiscales") == "tax_deadlines"
         
         # Test default
         assert generator._determine_report_type({}, "Unknown Topic") == "base_report"
@@ -147,7 +147,7 @@ class TestReportGenerator:
         )
         
         # Check that the result contains the expected sections
-        assert "# Test Topic" in result
+        assert "# Rapport Fiscal : Test Topic" in result
         assert "Test description" in result
         assert "key1" in result
         assert "value1" in result
@@ -186,7 +186,7 @@ class TestReportGenerator:
         )
         
         # Check that the result contains the expected sections
-        assert "# Dispositif pinel" in result
+        assert "# Dispositif Fiscal : pinel" in result
         assert "Test description" in result
         assert "Test advantages" in result
         assert "Test eligibility" in result
@@ -222,7 +222,7 @@ class TestReportGenerator:
         )
         
         # Check that the result contains the expected sections
-        assert "# Guide du formulaire 2042" in result
+        assert "# Guide du Formulaire : 2042" in result
         assert "Test description" in result
         assert "Test who should file" in result
         assert "Test main sections" in result

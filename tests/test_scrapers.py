@@ -14,10 +14,10 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from awslabs.french_tax_mcp_server.scrapers.base_scraper import BaseScraper
-from awslabs.french_tax_mcp_server.scrapers.impots_scraper import ImpotsScraper
-from awslabs.french_tax_mcp_server.scrapers.service_public_scraper import ServicePublicScraper
-from awslabs.french_tax_mcp_server.scrapers.legal_scraper import LegalScraper
+from french_tax_mcp.scrapers.base_scraper import BaseScraper
+from french_tax_mcp.scrapers.impots_scraper import ImpotsScraper
+from french_tax_mcp.scrapers.service_public_scraper import ServicePublicScraper
+from french_tax_mcp.scrapers.legal_scraper import LegalScraper
 
 
 class TestBaseScraper:
@@ -32,17 +32,19 @@ class TestBaseScraper:
         mock_response.status_code = 200
         mock_response.headers = {"Content-Type": "text/html"}
         
-        # Create a mock client
+        # Create a mock client context manager
         mock_client = AsyncMock()
         mock_client.get.return_value = mock_response
+        mock_client.__aenter__.return_value = mock_client
+        mock_client.__aexit__.return_value = None
         
         # Patch the AsyncClient
-        with patch("awslabs.french_tax_mcp_server.scrapers.base_scraper.AsyncClient", return_value=mock_client):
+        with patch("french_tax_mcp.scrapers.base_scraper.AsyncClient", return_value=mock_client):
             # Create a scraper
             scraper = BaseScraper("https://example.com")
             
-            # Call get_page
-            response = await scraper.get_page("/test")
+            # Call get_page with caching disabled
+            response = await scraper.get_page("/test", use_cache=False)
             
             # Check that the client was called with the correct URL
             mock_client.get.assert_called_once()

@@ -53,7 +53,7 @@ class LegalScraper(BaseScraper):
         
         try:
             # Construct URL
-            url = f"{CGI_URL}/LEGIARTI000{article_id}"
+            url = f"/codes/id/LEGITEXT000006069577/LEGIARTI000{article_id}"
             
             # Get the page
             response = await self.get_page(url)

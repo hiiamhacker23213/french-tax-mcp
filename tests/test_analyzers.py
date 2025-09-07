@@ -14,9 +14,9 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from awslabs.french_tax_mcp_server.analyzers.income_analyzer import IncomeTaxAnalyzer
-from awslabs.french_tax_mcp_server.analyzers.property_analyzer import PropertyTaxAnalyzer
-from awslabs.french_tax_mcp_server.analyzers.business_analyzer import BusinessTaxAnalyzer
+from french_tax_mcp.analyzers.income_analyzer import IncomeTaxAnalyzer
+from french_tax_mcp.analyzers.property_analyzer import PropertyTaxAnalyzer
+from french_tax_mcp.analyzers.business_analyzer import BusinessTaxAnalyzer
 
 
 class TestIncomeTaxAnalyzer:
@@ -29,7 +29,7 @@ class TestIncomeTaxAnalyzer:
         analyzer = IncomeTaxAnalyzer()
         
         # Mock the get_tax_brackets function
-        with patch("awslabs.french_tax_mcp_server.analyzers.income_analyzer.get_tax_brackets", new_callable=AsyncMock) as mock_get_tax_brackets:
+        with patch("french_tax_mcp.analyzers.income_analyzer.get_tax_brackets", new_callable=AsyncMock) as mock_get_tax_brackets:
             # Set up the mock to return a valid response
             mock_get_tax_brackets.return_value = {
                 "status": "success",

@@ -107,13 +107,13 @@ class ReportGenerator:
         if "scheme" in tax_data or any(keyword in topic_lower for keyword in ["pinel", "lmnp", "scheme", "dispositif"]):
             return "tax_scheme"
         
+        # Check for tax deadlines (check before calculation guide to avoid "tax" keyword conflict)
+        if "deadlines" in tax_data or any(keyword in topic_lower for keyword in ["deadline", "echeance", "échéance", "date"]):
+            return "tax_deadlines"
+        
         # Check for calculation guide
         if "calculation" in tax_data or any(keyword in topic_lower for keyword in ["calcul", "impot", "tax"]):
             return "calculation_guide"
-        
-        # Check for tax deadlines
-        if "deadlines" in tax_data or any(keyword in topic_lower for keyword in ["deadline", "echeance", "date"]):
-            return "tax_deadlines"
         
         # Default to base report
         return "base_report"
