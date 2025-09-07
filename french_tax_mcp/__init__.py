@@ -9,7 +9,7 @@
 
 """French Tax MCP Server - Tax calculations and information retrieval."""
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 __author__ = "Corneliu"
 __email__ = "corneliu@example.com"
 __license__ = "Apache-2.0"
