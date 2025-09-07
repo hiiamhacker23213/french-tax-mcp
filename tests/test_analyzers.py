@@ -25,7 +25,6 @@ class TestIncomeTaxAnalyzer:
     @pytest.mark.asyncio
     async def test_calculate_income_tax(self):
         """Test the calculate_income_tax method."""
-        # Create a mock analyzer
         analyzer = IncomeTaxAnalyzer()
         
         # Mock the get_tax_brackets function
@@ -44,13 +43,12 @@ class TestIncomeTaxAnalyzer:
                 }
             }
             
-            # Call calculate_income_tax
             result = await analyzer.calculate_income_tax(50000, 1.0, 2023)
             
-            # Check that get_tax_brackets was called with the correct year
+            # Verify get_tax_brackets was called with the correct year
             mock_get_tax_brackets.assert_called_once_with(2023)
             
-            # Check that the result was formatted correctly
+            # Verify result structure and content
             assert result["status"] == "success"
             assert "data" in result
             assert "year" in result["data"]
@@ -83,7 +81,8 @@ class TestIncomeTaxAnalyzer:
         assert "disabled_dependents" in result["data"]
         assert result["data"]["disabled_dependents"] == 1
         assert "total_parts" in result["data"]
-        assert result["data"]["total_parts"] == 3.5  # 2 (married) + 1 (2 children) + 0.5 (1 disabled)
+        # French tax calculation: 2 parts (married couple) + 1 part (2 children) + 0.5 part (disabled dependent)
+        assert result["data"]["total_parts"] == 3.5
 
 
 class TestPropertyTaxAnalyzer:

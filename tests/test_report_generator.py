@@ -24,7 +24,6 @@ class TestReportGenerator:
     @pytest.mark.asyncio
     async def test_generate_tax_report_markdown(self):
         """Test the generate_tax_report method with markdown format."""
-        # Create a mock generator
         generator = ReportGenerator()
         
         # Mock the _determine_report_type method
