@@ -10,10 +10,10 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = {file = "LICENSE"}
 authors = [
-    {name = "Corneliu", email = "corneliu@example.com"},
+    {name = "Corneliu CROITORU"},
 ]
 maintainers = [
-    {name = "Corneliu", email = "corneliu@example.com"},
+    {name = "Corneliu CROITORU"},
 ]
 keywords = [
     "mcp",
@@ -62,11 +62,11 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/corneliusroemer/french-tax-mcp"
-Documentation = "https://github.com/corneliusroemer/french-tax-mcp#readme"
-Repository = "https://github.com/corneliusroemer/french-tax-mcp.git"
-Issues = "https://github.com/corneliusroemer/french-tax-mcp/issues"
-Changelog = "https://github.com/corneliusroemer/french-tax-mcp/releases"
+Homepage = "https://github.com/cornelcroi/french-tax-mcp"
+Documentation = "https://github.com/cornelcroi/french-tax-mcp#readme"
+Repository = "https://github.com/cornelcroi/french-tax-mcp.git"
+Issues = "https://github.com/cornelcroi/french-tax-mcp/issues"
+Changelog = "https://github.com/cornelcroi/french-tax-mcp/releases"
 
 [project.scripts]
 french-tax-mcp = "french_tax_mcp.server:main"
