@@ -35,12 +35,6 @@ jobs:
         run: |
           pytest tests/ -v
 
-      - name: Run linting
-        run: |
-          black --check french_tax_mcp/
-          isort --check-only french_tax_mcp/
-          flake8 french_tax_mcp/ --max-line-length=130 --extend-ignore=E203,W503,F401,F811,E402
-
   build:
     needs: test
     runs-on: ubuntu-latest

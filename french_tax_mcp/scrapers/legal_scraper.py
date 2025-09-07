@@ -180,32 +180,77 @@ class LegalScraper(BaseScraper):
                 f"query={query}&corpus=CODES&typePagination=DEFAUT&pageSize=10&page=1"
                 "&tab_selection=code&searchField=ALL&searchType=ALL"
             )
-            
+
             # Article scope parameters (all types: L, R, T, A, D, M, V, etc.)
             article_scopes = [
-                "CODE_ARTICLE", "CODE_ARTICLE_C", "CODE_ARTICLE_L", "CODE_ARTICLE_R",
-                "CODE_ARTICLE_T", "CODE_ARTICLE_A", "CODE_ARTICLE_D", "CODE_ARTICLE_M",
-                "CODE_ARTICLE_V", "CODE_ARTICLE_LO", "CODE_ARTICLE_LP", "CODE_ARTICLE_LR",
-                "CODE_ARTICLE_LD", "CODE_ARTICLE_LM", "CODE_ARTICLE_LV", "CODE_ARTICLE_RO",
-                "CODE_ARTICLE_RP", "CODE_ARTICLE_RR", "CODE_ARTICLE_RD", "CODE_ARTICLE_RM",
-                "CODE_ARTICLE_RV", "CODE_ARTICLE_TO", "CODE_ARTICLE_TP", "CODE_ARTICLE_TR",
-                "CODE_ARTICLE_TD", "CODE_ARTICLE_TM", "CODE_ARTICLE_TV", "CODE_ARTICLE_AO",
-                "CODE_ARTICLE_AP", "CODE_ARTICLE_AR", "CODE_ARTICLE_AD", "CODE_ARTICLE_AM",
-                "CODE_ARTICLE_AV", "CODE_ARTICLE_DO", "CODE_ARTICLE_DP", "CODE_ARTICLE_DR",
-                "CODE_ARTICLE_DD", "CODE_ARTICLE_DM", "CODE_ARTICLE_DV", "CODE_ARTICLE_MO",
-                "CODE_ARTICLE_MP", "CODE_ARTICLE_MR", "CODE_ARTICLE_MD", "CODE_ARTICLE_MM",
-                "CODE_ARTICLE_MV", "CODE_ARTICLE_VO", "CODE_ARTICLE_VP", "CODE_ARTICLE_VR",
-                "CODE_ARTICLE_VD", "CODE_ARTICLE_VM", "CODE_ARTICLE_VV"
+                "CODE_ARTICLE",
+                "CODE_ARTICLE_C",
+                "CODE_ARTICLE_L",
+                "CODE_ARTICLE_R",
+                "CODE_ARTICLE_T",
+                "CODE_ARTICLE_A",
+                "CODE_ARTICLE_D",
+                "CODE_ARTICLE_M",
+                "CODE_ARTICLE_V",
+                "CODE_ARTICLE_LO",
+                "CODE_ARTICLE_LP",
+                "CODE_ARTICLE_LR",
+                "CODE_ARTICLE_LD",
+                "CODE_ARTICLE_LM",
+                "CODE_ARTICLE_LV",
+                "CODE_ARTICLE_RO",
+                "CODE_ARTICLE_RP",
+                "CODE_ARTICLE_RR",
+                "CODE_ARTICLE_RD",
+                "CODE_ARTICLE_RM",
+                "CODE_ARTICLE_RV",
+                "CODE_ARTICLE_TO",
+                "CODE_ARTICLE_TP",
+                "CODE_ARTICLE_TR",
+                "CODE_ARTICLE_TD",
+                "CODE_ARTICLE_TM",
+                "CODE_ARTICLE_TV",
+                "CODE_ARTICLE_AO",
+                "CODE_ARTICLE_AP",
+                "CODE_ARTICLE_AR",
+                "CODE_ARTICLE_AD",
+                "CODE_ARTICLE_AM",
+                "CODE_ARTICLE_AV",
+                "CODE_ARTICLE_DO",
+                "CODE_ARTICLE_DP",
+                "CODE_ARTICLE_DR",
+                "CODE_ARTICLE_DD",
+                "CODE_ARTICLE_DM",
+                "CODE_ARTICLE_DV",
+                "CODE_ARTICLE_MO",
+                "CODE_ARTICLE_MP",
+                "CODE_ARTICLE_MR",
+                "CODE_ARTICLE_MD",
+                "CODE_ARTICLE_MM",
+                "CODE_ARTICLE_MV",
+                "CODE_ARTICLE_VO",
+                "CODE_ARTICLE_VP",
+                "CODE_ARTICLE_VR",
+                "CODE_ARTICLE_VD",
+                "CODE_ARTICLE_VM",
+                "CODE_ARTICLE_VV",
             ]
             scope_params = "&".join([f"searchScope={scope}" for scope in article_scopes])
-            
+
             # Code parameters
             codes = [
-                "CGIAN2", "CGIAN3", "CGIAN4", "CGICT", "CGILEGIARTI000006308740",
-                "CGIPENAL", "CGISUBDIV", "CGITM", "LEGITEXT000006069577"
+                "CGIAN2",
+                "CGIAN3",
+                "CGIAN4",
+                "CGICT",
+                "CGILEGIARTI000006308740",
+                "CGIPENAL",
+                "CGISUBDIV",
+                "CGITM",
+                "LEGITEXT000006069577",
             ]
             code_params = "&".join([f"code={code}" for code in codes])
-            
+
             url = f"{SEARCH_URL}/code?{base_params}&{scope_params}&{code_params}"
 
             # Get the page
