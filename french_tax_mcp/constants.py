@@ -49,21 +49,21 @@ TAX_BRACKETS = {
         {"min": 10778, "max": 27478, "rate": 11},
         {"min": 27479, "max": 78570, "rate": 30},
         {"min": 78571, "max": 168994, "rate": 41},
-        {"min": 168995, "max": None, "rate": 45}
+        {"min": 168995, "max": None, "rate": 45},
     ],
     2024: [
         {"min": 0, "max": 11294, "rate": 0},
         {"min": 11295, "max": 28797, "rate": 11},
         {"min": 28798, "max": 82341, "rate": 30},
         {"min": 82342, "max": 177106, "rate": 41},
-        {"min": 177107, "max": None, "rate": 45}
+        {"min": 177107, "max": None, "rate": 45},
     ],
     2025: [
         {"min": 0, "max": 11859, "rate": 0},
         {"min": 11860, "max": 30237, "rate": 11},
         {"min": 30238, "max": 86458, "rate": 30},
         {"min": 86459, "max": 185961, "rate": 41},
-        {"min": 185962, "max": None, "rate": 45}
+        {"min": 185962, "max": None, "rate": 45},
     ],
 }
 
@@ -73,39 +73,15 @@ TAX_BRACKETS = {
 
 PINEL_RATES = {
     # 2025 and beyond (reduced rates)
-    2025: {
-        6: 0.09,   # 9%
-        9: 0.12,   # 12%
-        12: 0.14   # 14%
-    },
+    2025: {6: 0.09, 9: 0.12, 12: 0.14},  # 9%  # 12%  # 14%
     # 2023-2024
-    2023: {
-        6: 0.105,  # 10.5%
-        9: 0.15,   # 15%
-        12: 0.175  # 17.5%
-    },
-    2024: {
-        6: 0.105,  # 10.5%
-        9: 0.15,   # 15%
-        12: 0.175  # 17.5%
-    },
+    2023: {6: 0.105, 9: 0.15, 12: 0.175},  # 10.5%  # 15%  # 17.5%
+    2024: {6: 0.105, 9: 0.15, 12: 0.175},  # 10.5%  # 15%  # 17.5%
     # 2021-2022
-    2021: {
-        6: 0.12,   # 12%
-        9: 0.18,   # 18%
-        12: 0.21   # 21%
-    },
-    2022: {
-        6: 0.12,   # 12%
-        9: 0.18,   # 18%
-        12: 0.21   # 21%
-    },
+    2021: {6: 0.12, 9: 0.18, 12: 0.21},  # 12%  # 18%  # 21%
+    2022: {6: 0.12, 9: 0.18, 12: 0.21},  # 12%  # 18%  # 21%
     # Pre-2021 (default)
-    "default": {
-        6: 0.12,   # 12%
-        9: 0.18,   # 18%
-        12: 0.21   # 21%
-    }
+    "default": {6: 0.12, 9: 0.18, 12: 0.21},  # 12%  # 18%  # 21%
 }
 
 # Maximum Pinel investment amount
@@ -118,30 +94,30 @@ PINEL_MAX_PRICE_PER_M2 = 5500  # €5,500/m²
 
 # Abatement rates by activity type
 MICRO_ENTERPRISE_ABATEMENT_RATES = {
-    "commercial": 0.71,    # 71%
-    "services": 0.50,      # 50%
-    "liberal": 0.34        # 34%
+    "commercial": 0.71,  # 71%
+    "services": 0.50,  # 50%
+    "liberal": 0.34,  # 34%
 }
 
 # Social charges rates by activity type (2024)
 MICRO_ENTERPRISE_SOCIAL_CHARGES = {
-    "commercial": 0.128,   # 12.8%
-    "services": 0.22,      # 22%
-    "liberal": 0.22        # 22%
+    "commercial": 0.128,  # 12.8%
+    "services": 0.22,  # 22%
+    "liberal": 0.22,  # 22%
 }
 
 # Versement libératoire rates by activity type
 VERSEMENT_LIBERATOIRE_RATES = {
-    "commercial": 0.01,    # 1%
-    "services": 0.017,     # 1.7%
-    "liberal": 0.027       # 2.7%
+    "commercial": 0.01,  # 1%
+    "services": 0.017,  # 1.7%
+    "liberal": 0.027,  # 2.7%
 }
 
 # Revenue thresholds for micro-enterprise regime
 MICRO_ENTERPRISE_THRESHOLDS = {
     "commercial": 188700,  # €188,700
-    "services": 77700,     # €77,700
-    "liberal": 77700       # €77,700
+    "services": 77700,  # €77,700
+    "liberal": 77700,  # €77,700
 }
 
 # ACCRE reduction rate
@@ -180,8 +156,8 @@ TAX_FORMS = {
             "Plus-values et gains divers",
             "Revenus fonciers",
             "Charges déductibles",
-            "Réductions et crédits d'impôt"
-        ]
+            "Réductions et crédits d'impôt",
+        ],
     },
     "2042-C": {
         "title": "Déclaration complémentaire",
@@ -189,8 +165,8 @@ TAX_FORMS = {
         "sections": [
             "Revenus exceptionnels",
             "Revenus de source étrangère",
-            "Réductions d'impôt spécifiques"
-        ]
+            "Réductions d'impôt spécifiques",
+        ],
     },
     "2042-C-PRO": {
         "title": "Déclaration des revenus professionnels",
@@ -198,8 +174,8 @@ TAX_FORMS = {
         "sections": [
             "Bénéfices industriels et commerciaux (BIC)",
             "Bénéfices non commerciaux (BNC)",
-            "Bénéfices agricoles (BA)"
-        ]
+            "Bénéfices agricoles (BA)",
+        ],
     },
     "2044": {
         "title": "Déclaration des revenus fonciers",
@@ -209,8 +185,8 @@ TAX_FORMS = {
             "Recettes brutes",
             "Frais et charges",
             "Intérêts d'emprunt",
-            "Détermination du revenu ou déficit"
-        ]
+            "Détermination du revenu ou déficit",
+        ],
     },
     "2031": {
         "title": "Déclaration des résultats BIC",
@@ -220,9 +196,9 @@ TAX_FORMS = {
             "Résultat fiscal",
             "Immobilisations et amortissements",
             "Provisions",
-            "Plus-values et moins-values"
-        ]
-    }
+            "Plus-values et moins-values",
+        ],
+    },
 }
 
 # Declaration boxes for different income types
@@ -230,13 +206,10 @@ DECLARATION_BOXES = {
     "micro_enterprise": {
         "commercial": {"main": "5KO", "spouse": "5LO"},
         "services": {"main": "5KP", "spouse": "5LP"},
-        "liberal": {"main": "5HQ", "spouse": "5IQ"}
+        "liberal": {"main": "5HQ", "spouse": "5IQ"},
     },
-    "lmnp": {
-        "micro": {"main": "5ND", "spouse": "5OD"},
-        "reel": {"main": "5NA", "spouse": "5OA"}
-    },
-    "versement_liberatoire": {"main": "5TA", "spouse": "5UA"}
+    "lmnp": {"micro": {"main": "5ND", "spouse": "5OD"}, "reel": {"main": "5NA", "spouse": "5OA"}},
+    "versement_liberatoire": {"main": "5TA", "spouse": "5UA"},
 }
 
 # =============================================================================
@@ -249,14 +222,14 @@ HOUSEHOLD_PARTS_BASE = {
     "separated": 1.0,
     "married": 2.0,
     "pacs": 2.0,
-    "widowed": 1.0
+    "widowed": 1.0,
 }
 
 # Additional parts for children
 HOUSEHOLD_PARTS_CHILDREN = {
     0: 0.0,
     1: 0.5,
-    2: 1.0
+    2: 1.0,
     # For 3+ children: 1.0 + (num_children - 2) * 1.0
 }
 
@@ -291,18 +264,18 @@ TAX_SCHEMES = {
     "pinel": {
         "name": "Dispositif Pinel",
         "description": "Mécanisme de défiscalisation immobilière pour l'investissement dans un logement neuf destiné à la location",
-        "url": IMPOTS_PINEL_URL
+        "url": IMPOTS_PINEL_URL,
     },
     "lmnp": {
         "name": "Location Meublée Non Professionnelle",
         "description": "Statut permettant de percevoir des revenus locatifs issus de la location meublée non professionnelle",
-        "url": IMPOTS_LMNP_URL
+        "url": IMPOTS_LMNP_URL,
     },
     "lmp": {
         "name": "Loueur en Meublé Professionnel",
         "description": "Statut pour les personnes qui exercent l'activité de location meublée à titre professionnel",
-        "url": IMPOTS_LMNP_URL
-    }
+        "url": IMPOTS_LMNP_URL,
+    },
 }
 
 # =============================================================================
@@ -310,18 +283,29 @@ TAX_SCHEMES = {
 # =============================================================================
 
 FRENCH_MONTHS = {
-    "janvier": 1, "jan": 1,
-    "février": 2, "fév": 2,
-    "mars": 3, "mar": 3,
-    "avril": 4, "avr": 4,
+    "janvier": 1,
+    "jan": 1,
+    "février": 2,
+    "fév": 2,
+    "mars": 3,
+    "mar": 3,
+    "avril": 4,
+    "avr": 4,
     "mai": 5,
-    "juin": 6, "jun": 6,
-    "juillet": 7, "jul": 7,
-    "août": 8, "aoû": 8,
-    "septembre": 9, "sep": 9,
-    "octobre": 10, "oct": 10,
-    "novembre": 11, "nov": 11,
-    "décembre": 12, "déc": 12
+    "juin": 6,
+    "jun": 6,
+    "juillet": 7,
+    "jul": 7,
+    "août": 8,
+    "aoû": 8,
+    "septembre": 9,
+    "sep": 9,
+    "octobre": 10,
+    "oct": 10,
+    "novembre": 11,
+    "nov": 11,
+    "décembre": 12,
+    "déc": 12,
 }
 
 # =============================================================================
@@ -336,7 +320,7 @@ ERROR_MESSAGES = {
     "scraping_failed": "Échec de la récupération des données depuis le site web.",
     "calculation_failed": "Échec du calcul fiscal.",
     "unknown_scheme": "Dispositif fiscal inconnu.",
-    "unknown_form": "Formulaire fiscal inconnu."
+    "unknown_form": "Formulaire fiscal inconnu.",
 }
 
 # =============================================================================
@@ -348,5 +332,5 @@ SUCCESS_MESSAGES = {
     "scheme_details_retrieved": "Détails du dispositif récupérés avec succès",
     "form_details_retrieved": "Détails du formulaire récupérés avec succès",
     "tax_calculated": "Impôt calculé avec succès",
-    "report_generated": "Rapport généré avec succès"
+    "report_generated": "Rapport généré avec succès",
 }

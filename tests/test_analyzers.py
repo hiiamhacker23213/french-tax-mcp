@@ -11,24 +11,27 @@
 
 """Tests for the analyzers."""
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import pytest
+
+from french_tax_mcp.analyzers.business_analyzer import BusinessTaxAnalyzer
 from french_tax_mcp.analyzers.income_analyzer import IncomeTaxAnalyzer
 from french_tax_mcp.analyzers.property_analyzer import PropertyTaxAnalyzer
-from french_tax_mcp.analyzers.business_analyzer import BusinessTaxAnalyzer
 
 
 class TestIncomeTaxAnalyzer:
     """Tests for the IncomeTaxAnalyzer class."""
-    
+
     @pytest.mark.asyncio
     async def test_calculate_income_tax(self):
         """Test the calculate_income_tax method."""
         analyzer = IncomeTaxAnalyzer()
-        
+
         # Mock the get_tax_brackets function
-        with patch("french_tax_mcp.analyzers.income_analyzer.get_tax_brackets", new_callable=AsyncMock) as mock_get_tax_brackets:
+        with patch(
+            "french_tax_mcp.analyzers.income_analyzer.get_tax_brackets", new_callable=AsyncMock
+        ) as mock_get_tax_brackets:
             # Set up the mock to return a valid response
             mock_get_tax_brackets.return_value = {
                 "status": "success",
@@ -40,14 +43,14 @@ class TestIncomeTaxAnalyzer:
                         {"min": 80001, "max": 170000, "rate": 41},
                         {"min": 170001, "max": None, "rate": 45},
                     ]
-                }
+                },
             }
-            
+
             result = await analyzer.calculate_income_tax(50000, 1.0, 2023)
-            
+
             # Verify get_tax_brackets was called with the correct year
             mock_get_tax_brackets.assert_called_once_with(2023)
-            
+
             # Verify result structure and content
             assert result["status"] == "success"
             assert "data" in result
@@ -61,16 +64,16 @@ class TestIncomeTaxAnalyzer:
             assert "average_tax_rate" in result["data"]
             assert "marginal_tax_rate" in result["data"]
             assert "bracket_details" in result["data"]
-    
+
     @pytest.mark.asyncio
     async def test_calculate_household_parts(self):
         """Test the calculate_household_parts method."""
         # Create a mock analyzer
         analyzer = IncomeTaxAnalyzer()
-        
+
         # Call calculate_household_parts
         result = await analyzer.calculate_household_parts("married", 2, 1)
-        
+
         # Check that the result was formatted correctly
         assert result["status"] == "success"
         assert "data" in result
@@ -87,16 +90,16 @@ class TestIncomeTaxAnalyzer:
 
 class TestPropertyTaxAnalyzer:
     """Tests for the PropertyTaxAnalyzer class."""
-    
+
     @pytest.mark.asyncio
     async def test_calculate_pinel_benefit(self):
         """Test the calculate_pinel_benefit method."""
         # Create a mock analyzer
         analyzer = PropertyTaxAnalyzer()
-        
+
         # Call calculate_pinel_benefit
         result = await analyzer.calculate_pinel_benefit(200000, 9, "2023-01-01")
-        
+
         # Check that the result was formatted correctly
         assert result["status"] == "success"
         assert "data" in result
@@ -111,16 +114,16 @@ class TestPropertyTaxAnalyzer:
         assert "total_reduction" in result["data"]
         assert "annual_reduction" in result["data"]
         assert "reduction_schedule" in result["data"]
-    
+
     @pytest.mark.asyncio
     async def test_calculate_lmnp_benefit(self):
         """Test the calculate_lmnp_benefit method."""
         # Create a mock analyzer
         analyzer = PropertyTaxAnalyzer()
-        
+
         # Call calculate_lmnp_benefit
         result = await analyzer.calculate_lmnp_benefit(12000, 3000, 150000, 10000, "micro")
-        
+
         # Check that the result was formatted correctly
         assert result["status"] == "success"
         assert "data" in result
@@ -136,16 +139,16 @@ class TestPropertyTaxAnalyzer:
 
 class TestBusinessTaxAnalyzer:
     """Tests for the BusinessTaxAnalyzer class."""
-    
+
     @pytest.mark.asyncio
     async def test_calculate_micro_enterprise_tax(self):
         """Test the calculate_micro_enterprise_tax method."""
         # Create a mock analyzer
         analyzer = BusinessTaxAnalyzer()
-        
+
         # Call calculate_micro_enterprise_tax
         result = await analyzer.calculate_micro_enterprise_tax(50000, "services", False, 2023)
-        
+
         # Check that the result was formatted correctly
         assert result["status"] == "success"
         assert "data" in result
@@ -164,16 +167,18 @@ class TestBusinessTaxAnalyzer:
         assert "total_tax" in result["data"]
         assert "net_income" in result["data"]
         assert "declaration_info" in result["data"]
-    
+
     @pytest.mark.asyncio
     async def test_calculate_auto_entrepreneur_tax(self):
         """Test the calculate_auto_entrepreneur_tax method."""
         # Create a mock analyzer
         analyzer = BusinessTaxAnalyzer()
-        
+
         # Call calculate_auto_entrepreneur_tax
-        result = await analyzer.calculate_auto_entrepreneur_tax(50000, "services", True, False, 2023)
-        
+        result = await analyzer.calculate_auto_entrepreneur_tax(
+            50000, "services", True, False, 2023
+        )
+
         # Check that the result was formatted correctly
         assert result["status"] == "success"
         assert "data" in result

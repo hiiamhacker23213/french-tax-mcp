@@ -13,11 +13,7 @@ import logging
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple, Union
 
-from french_tax_mcp.constants import (
-    IMPOTS_BASE_URL,
-    IMPOTS_FORMS_BASE_URL,
-    TAX_SCHEMES
-)
+from french_tax_mcp.constants import IMPOTS_BASE_URL, IMPOTS_FORMS_BASE_URL, TAX_SCHEMES
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -26,38 +22,38 @@ logger = logging.getLogger(__name__)
 
 class TaxHelper:
     """Helper class for French tax information."""
-    
+
     @staticmethod
     def format_currency(amount: float) -> str:
         """Format a currency amount.
-        
+
         Args:
             amount: Amount to format
-            
+
         Returns:
             Formatted currency string
         """
         return f"{amount:,.2f} €".replace(",", " ").replace(".", ",")
-    
+
     @staticmethod
     def format_percentage(value: float) -> str:
         """Format a percentage value.
-        
+
         Args:
             value: Percentage value to format
-            
+
         Returns:
             Formatted percentage string
         """
         return f"{value:.2f}%".replace(".", ",")
-    
+
     @staticmethod
     def format_date(date_str: str) -> str:
         """Format a date string.
-        
+
         Args:
             date_str: Date string in format 'YYYY-MM-DD'
-            
+
         Returns:
             Formatted date string in format 'DD/MM/YYYY'
         """
@@ -66,50 +62,50 @@ class TaxHelper:
             return date.strftime("%d/%m/%Y")
         except ValueError:
             return date_str
-    
+
     @staticmethod
     def get_tax_year() -> int:
         """Get the current tax year.
-        
+
         In France, the tax year is the previous calendar year.
-        
+
         Returns:
             Current tax year
         """
         return datetime.now().year - 1
-    
+
     @staticmethod
     def get_declaration_year() -> int:
         """Get the current declaration year.
-        
+
         In France, taxes are declared in the year following the tax year.
-        
+
         Returns:
             Current declaration year
         """
         return datetime.now().year
-    
+
     @staticmethod
     def get_tax_form_url(form_number: str) -> str:
         """Get the URL for a tax form.
-        
+
         Args:
             form_number: Form number
-            
+
         Returns:
             URL for the form
         """
         return f"{IMPOTS_BASE_URL}{IMPOTS_FORMS_BASE_URL}/download/pdf/{form_number}"
-    
+
     @staticmethod
     def get_tax_calendar() -> Dict[str, str]:
         """Get the tax calendar for the current year.
-        
+
         Returns:
             Dictionary mapping event names to dates
         """
         current_year = datetime.now().year
-        
+
         # This is a simplified calendar
         # In a real implementation, this would be retrieved from an official source
         return {
@@ -119,24 +115,24 @@ class TaxHelper:
             "tax_notice": f"July-August, {current_year}",
             "payment_deadline": f"September 15, {current_year}",
         }
-    
+
     @staticmethod
     def map_topic_to_url(topic: str) -> str:
         """Map a tax topic to a URL.
-        
+
         Args:
             topic: Tax topic
-            
+
         Returns:
             URL for the topic
         """
         topic_lower = topic.lower()
-        
+
         # Check if it's a known tax scheme
         for scheme_key, scheme_info in TAX_SCHEMES.items():
             if scheme_key in topic_lower:
                 return f"{IMPOTS_BASE_URL}{scheme_info['url']}"
-        
+
         # Map other common topics to URLs
         topic_map = {
             "impot_revenu": f"{IMPOTS_BASE_URL}/particulier/questions/comment-declarer-mes-revenus",
@@ -145,11 +141,11 @@ class TaxHelper:
             "credit_impot": f"{IMPOTS_BASE_URL}/particulier/questions/puis-je-beneficier-de-credits-ou-de-reductions-dimpot",
             "prelevement_source": f"{IMPOTS_BASE_URL}/particulier/questions/comment-fonctionne-le-prelevement-la-source",
         }
-        
+
         # Try to find a match
         for key, url in topic_map.items():
             if key in topic_lower:
                 return url
-        
+
         # Default to the main page
         return f"{IMPOTS_BASE_URL}/particulier"

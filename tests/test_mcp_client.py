@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 
-from fastmcp.client import Client
 import asyncio
 import logging
+
 import httpx
+from fastmcp.client import Client
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
+
 
 async def main():
     try:
@@ -18,7 +20,7 @@ async def main():
                 print(f"HTTP response: {response.status_code} {response.text}")
             except Exception as e:
                 print(f"HTTP request failed: {e}")
-        
+
         # Try different paths that might be used by the MCP server
         paths = [
             "/",
@@ -30,9 +32,9 @@ async def main():
             "/mcp/api",
             "/mcp/v1",
             "/streamable-http",
-            "/sse"
+            "/sse",
         ]
-        
+
         print("\nTesting different MCP endpoint paths...")
         for path in paths:
             url = f"http://127.0.0.1:8888{path}"
@@ -46,11 +48,13 @@ async def main():
                     break
             except Exception as e:
                 print(f"  Failed: {e}")
-        
+
     except Exception as e:
         print(f"Error: {e}")
         import traceback
+
         traceback.print_exc()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

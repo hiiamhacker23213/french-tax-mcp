@@ -12,14 +12,15 @@
 """Test fixtures for the French tax MCP server."""
 
 import os
-import pytest
 from pathlib import Path
+
+import pytest
 
 
 @pytest.fixture
 def mock_data_dir() -> Path:
     """Get the path to the mock data directory.
-    
+
     Returns:
         Path to the mock data directory
     """
@@ -29,10 +30,10 @@ def mock_data_dir() -> Path:
 @pytest.fixture
 def mock_html_response(mock_data_dir: Path) -> str:
     """Get a mock HTML response.
-    
+
     Args:
         mock_data_dir: Path to the mock data directory
-        
+
     Returns:
         Mock HTML response
     """
@@ -43,10 +44,10 @@ def mock_html_response(mock_data_dir: Path) -> str:
 @pytest.fixture
 def mock_tax_brackets_response(mock_data_dir: Path) -> str:
     """Get a mock tax brackets response.
-    
+
     Args:
         mock_data_dir: Path to the mock data directory
-        
+
     Returns:
         Mock tax brackets response
     """
@@ -57,10 +58,10 @@ def mock_tax_brackets_response(mock_data_dir: Path) -> str:
 @pytest.fixture
 def mock_form_response(mock_data_dir: Path) -> str:
     """Get a mock form response.
-    
+
     Args:
         mock_data_dir: Path to the mock data directory
-        
+
     Returns:
         Mock form response
     """
@@ -71,10 +72,10 @@ def mock_form_response(mock_data_dir: Path) -> str:
 @pytest.fixture
 def mock_scheme_response(mock_data_dir: Path) -> str:
     """Get a mock scheme response.
-    
+
     Args:
         mock_data_dir: Path to the mock data directory
-        
+
     Returns:
         Mock scheme response
     """
@@ -85,10 +86,10 @@ def mock_scheme_response(mock_data_dir: Path) -> str:
 @pytest.fixture
 def mock_deadlines_response(mock_data_dir: Path) -> str:
     """Get a mock deadlines response.
-    
+
     Args:
         mock_data_dir: Path to the mock data directory
-        
+
     Returns:
         Mock deadlines response
     """
@@ -99,10 +100,10 @@ def mock_deadlines_response(mock_data_dir: Path) -> str:
 @pytest.fixture
 def mock_article_response(mock_data_dir: Path) -> str:
     """Get a mock article response.
-    
+
     Args:
         mock_data_dir: Path to the mock data directory
-        
+
     Returns:
         Mock article response
     """

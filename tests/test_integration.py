@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 """Integration tests for the French Tax MCP Server."""
 
-import pytest
 from unittest.mock import AsyncMock, patch
 
-from french_tax_mcp.analyzers.income_analyzer import calculate_income_tax
-from french_tax_mcp.analyzers.property_analyzer import calculate_pinel_benefit, calculate_lmnp_benefit
+import pytest
+
 from french_tax_mcp.analyzers.business_analyzer import calculate_micro_enterprise_tax
+from french_tax_mcp.analyzers.income_analyzer import calculate_income_tax
+from french_tax_mcp.analyzers.property_analyzer import (
+    calculate_lmnp_benefit,
+    calculate_pinel_benefit,
+)
 from french_tax_mcp.constants import TAX_BRACKETS
 
 
@@ -18,7 +22,7 @@ class TestIntegration:
         """Test income tax calculation with real data."""
         # Test with a typical salary
         result = await calculate_income_tax(50000, 2.0, 2024)
-        
+
         assert result["status"] == "success"
         assert "data" in result
         assert result["data"]["net_taxable_income"] == 50000
@@ -31,7 +35,7 @@ class TestIntegration:
     async def test_pinel_calculation_integration(self):
         """Test Pinel calculation with real data."""
         result = await calculate_pinel_benefit(250000, 9, "2024-01-01")
-        
+
         assert result["status"] == "success"
         assert "data" in result
         assert result["data"]["property_price"] == 250000
@@ -43,7 +47,7 @@ class TestIntegration:
     async def test_lmnp_calculation_integration(self):
         """Test LMNP calculation with real data."""
         result = await calculate_lmnp_benefit(24000, 0, 0, 0, "micro")
-        
+
         assert result["status"] == "success"
         assert "data" in result
         assert result["data"]["annual_rent"] == 24000
@@ -54,7 +58,7 @@ class TestIntegration:
     async def test_micro_enterprise_calculation_integration(self):
         """Test micro-enterprise calculation with real data."""
         result = await calculate_micro_enterprise_tax(40000, "services", False, 2024)
-        
+
         assert result["status"] == "success"
         assert "data" in result
         assert result["data"]["annual_revenue"] == 40000
@@ -66,12 +70,12 @@ class TestIntegration:
         """Test that tax brackets constants are properly defined."""
         assert 2024 in TAX_BRACKETS
         brackets_2024 = TAX_BRACKETS[2024]
-        
+
         # Check structure
         assert len(brackets_2024) == 5
         assert brackets_2024[0]["rate"] == 0  # First bracket is 0%
         assert brackets_2024[-1]["rate"] == 45  # Last bracket is 45%
-        
+
         # Check progression
         for i in range(len(brackets_2024) - 1):
             assert brackets_2024[i]["rate"] < brackets_2024[i + 1]["rate"]
@@ -82,11 +86,11 @@ class TestIntegration:
         # Test with invalid commitment period for Pinel
         result = await calculate_pinel_benefit(250000, 5, "2024-01-01")
         assert result["status"] == "error"
-        
+
         # Test with invalid activity type for micro-enterprise
         result = await calculate_micro_enterprise_tax(40000, "invalid", False, 2024)
         assert result["status"] == "error"
-        
+
         # Test with invalid regime for LMNP
         result = await calculate_lmnp_benefit(24000, 0, 0, 0, "invalid")
         assert result["status"] == "error"
@@ -98,12 +102,12 @@ class TestIntegration:
         result = await calculate_income_tax(0, 1.0, 2024)
         assert result["status"] == "success"
         assert result["data"]["total_tax"] == 0
-        
+
         # Test with maximum Pinel investment
         result = await calculate_pinel_benefit(300000, 12, "2024-01-01")
         assert result["status"] == "success"
         assert result["data"]["eligible_amount"] == 300000
-        
+
         # Test with investment above maximum
         result = await calculate_pinel_benefit(400000, 12, "2024-01-01")
         assert result["status"] == "success"

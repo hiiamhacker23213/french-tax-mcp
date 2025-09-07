@@ -9,7 +9,7 @@
 
 """French Tax MCP Server.
 
-A specialized MCP (Model Context Protocol) server that provides accurate, up-to-date 
+A specialized MCP (Model Context Protocol) server that provides accurate, up-to-date
 French tax information by scraping official government websites and performing tax calculations.
 """
 
