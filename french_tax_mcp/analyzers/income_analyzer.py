@@ -287,6 +287,4 @@ async def calculate_household_parts(
     Returns:
         Dictionary containing household parts calculation details
     """
-    return await income_tax_analyzer.calculate_household_parts(
-        marital_status, num_children, disabled_dependents
-    )
+    return await income_tax_analyzer.calculate_household_parts(marital_status, num_children, disabled_dependents)

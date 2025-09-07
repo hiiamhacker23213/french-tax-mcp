@@ -14,36 +14,29 @@ This server provides tools for French tax calculations and information retrieval
 
 import argparse
 import logging
-import os
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Optional
 
 from mcp.server.fastmcp import Context, FastMCP
 from pydantic import BaseModel, Field
 
-# Set up logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-from french_tax_mcp.analyzers.business_analyzer import (
-    calculate_auto_entrepreneur_tax,
-    calculate_micro_enterprise_tax,
-)
-from french_tax_mcp.analyzers.income_analyzer import calculate_household_parts, calculate_income_tax
+from french_tax_mcp.analyzers.business_analyzer import calculate_micro_enterprise_tax
+from french_tax_mcp.analyzers.income_analyzer import calculate_income_tax
 from french_tax_mcp.analyzers.property_analyzer import (
     calculate_lmnp_benefit,
     calculate_pinel_benefit,
 )
 from french_tax_mcp.report_generator import generate_tax_report
-
-# Import scrapers, analyzers, and report generator
-from french_tax_mcp.scrapers.impots_scraper import (
-    get_form_info,
-    get_scheme_details,
-    get_tax_brackets,
-)
+from french_tax_mcp.scrapers.impots_scraper import get_form_info, get_tax_brackets
 from french_tax_mcp.scrapers.legal_scraper import get_tax_article, search_tax_law
-from french_tax_mcp.scrapers.service_public_scraper import get_tax_deadlines, get_tax_procedure
+from french_tax_mcp.scrapers.service_public_scraper import (
+    get_tax_deadlines,
+    get_tax_procedure,
+)
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 mcp = FastMCP(
     name="french-tax-mcp",
@@ -85,21 +78,15 @@ mcp = FastMCP(
 class TaxInfoRequest(BaseModel):
     """Request model for tax information queries."""
 
-    topic: str = Field(
-        ..., description="The tax topic to search for (e.g., 'tranches_impot', 'pinel', 'lmnp')"
-    )
-    year: Optional[int] = Field(
-        None, description="Tax year (defaults to current year if not specified)"
-    )
+    topic: str = Field(..., description="The tax topic to search for (e.g., 'tranches_impot', 'pinel', 'lmnp')")
+    year: Optional[int] = Field(None, description="Tax year (defaults to current year if not specified)")
 
 
 @mcp.tool(
     name="get_tax_info_from_web",
     description="Get tax information from official French government websites like impots.gouv.fr, service-public.fr, or legifrance.gouv.fr",
 )
-async def get_tax_info_from_web(
-    tax_topic: str, ctx: Context, year: Optional[int] = None
-) -> Optional[Dict]:
+async def get_tax_info_from_web(tax_topic: str, ctx: Context, year: Optional[int] = None) -> Optional[Dict]:
     """Get tax information from official French government websites.
 
     Args:
@@ -180,9 +167,7 @@ async def get_tax_brackets_wrapper(ctx: Context, year: Optional[int] = None) -> 
     name="get_scheme_details",
     description="Get detailed information about a specific tax scheme like Pinel, LMNP, etc.",
 )
-async def get_scheme_details_wrapper(
-    scheme_name: str, ctx: Context, year: Optional[int] = None
-) -> Optional[Dict]:
+async def get_scheme_details_wrapper(scheme_name: str, ctx: Context, year: Optional[int] = None) -> Optional[Dict]:
     """Get detailed information about a specific tax scheme.
 
     Args:
@@ -202,9 +187,8 @@ async def get_scheme_details_wrapper(
 
         # Try to get information from the scraper first
         try:
-            from french_tax_mcp.scrapers.impots_scraper import get_scheme_details
-
-            result = await get_scheme_details(scheme_name, year)
+            # Use fallback data since web scraping is not implemented yet
+            result = None
             if result.get("status") == "success":
                 return result
         except Exception as e:
@@ -348,9 +332,7 @@ async def get_scheme_details_wrapper(
     name="get_form_details",
     description="Get detailed information about a specific tax form including fields and instructions",
 )
-async def get_form_details_wrapper(
-    form_number: str, ctx: Context, year: Optional[int] = None
-) -> Optional[Dict]:
+async def get_form_details_wrapper(form_number: str, ctx: Context, year: Optional[int] = None) -> Optional[Dict]:
     """Get detailed information about a specific tax form.
 
     Args:
@@ -370,8 +352,6 @@ async def get_form_details_wrapper(
 
         # Try to get information from the scraper first
         try:
-            from french_tax_mcp.scrapers.impots_scraper import get_form_info
-
             result = await get_form_info(form_number, year)
             if result.get("status") == "success":
                 return result
@@ -406,7 +386,7 @@ async def get_form_details_wrapper(
                         {"number": "2042-RICI", "title": "Réductions d'impôt et crédits d'impôt"},
                         {"number": "2044", "title": "Revenus fonciers"},
                     ],
-                    "download_link": f"https://www.impots.gouv.fr/formulaire/2042/declaration-des-revenus",
+                    "download_link": "https://www.impots.gouv.fr/formulaire/2042/declaration-des-revenus",
                 },
                 "source": "Fallback data",
             }
@@ -434,7 +414,7 @@ async def get_form_details_wrapper(
                             "title": "Déclaration des revenus fonciers spéciaux",
                         },
                     ],
-                    "download_link": f"https://www.impots.gouv.fr/formulaire/2044/declaration-des-revenus-fonciers",
+                    "download_link": "https://www.impots.gouv.fr/formulaire/2044/declaration-des-revenus-fonciers",
                 },
                 "source": "Fallback data",
             }
@@ -459,7 +439,7 @@ async def get_form_details_wrapper(
                         {"number": "2033-A à G", "title": "Régime simplifié"},
                         {"number": "2042-C-PRO", "title": "Report des revenus professionnels"},
                     ],
-                    "download_link": f"https://www.impots.gouv.fr/formulaire/2031-sd/declaration-de-resultats",
+                    "download_link": "https://www.impots.gouv.fr/formulaire/2031-sd/declaration-de-resultats",
                 },
                 "source": "Fallback data",
             }
@@ -486,9 +466,7 @@ async def get_form_details_wrapper(
     name="get_cached_tax_info",
     description="Get cached tax information when web scraping fails",
 )
-async def get_cached_tax_info(
-    tax_topic: str, ctx: Context, year: Optional[int] = None
-) -> Optional[Dict]:
+async def get_cached_tax_info(tax_topic: str, ctx: Context, year: Optional[int] = None) -> Optional[Dict]:
     """Get cached tax information when web scraping fails.
 
     Args:
@@ -566,9 +544,7 @@ async def calculate_income_tax_wrapper(
     """
     try:
         if ctx:
-            await ctx.info(
-                f"Calculating income tax for {net_taxable_income}€ with {household_parts} parts"
-            )
+            await ctx.info(f"Calculating income tax for {net_taxable_income}€ with {household_parts} parts")
 
         result = await calculate_income_tax(net_taxable_income, household_parts, year)
         return result
@@ -646,9 +622,7 @@ async def calculate_lmnp_benefit_wrapper(
         if ctx:
             await ctx.info(f"Calculating LMNP benefit for {annual_rent}€ annual rent")
 
-        result = await calculate_lmnp_benefit(
-            annual_rent, expenses, property_value, furniture_value, regime
-        )
+        result = await calculate_lmnp_benefit(annual_rent, expenses, property_value, furniture_value, regime)
         return result
     except Exception as e:
         if ctx:
@@ -684,13 +658,9 @@ async def calculate_micro_enterprise_tax_wrapper(
     """
     try:
         if ctx:
-            await ctx.info(
-                f"Calculating micro-enterprise tax for {annual_revenue}€ {activity_type} activity"
-            )
+            await ctx.info(f"Calculating micro-enterprise tax for {annual_revenue}€ {activity_type} activity")
 
-        result = await calculate_micro_enterprise_tax(
-            annual_revenue, activity_type, accre_eligible, year
-        )
+        result = await calculate_micro_enterprise_tax(annual_revenue, activity_type, accre_eligible, year)
         return result
     except Exception as e:
         if ctx:
@@ -868,9 +838,7 @@ def main():
     """Run the MCP server with CLI argument support."""
     parser = argparse.ArgumentParser(description="French Tax MCP Server")
     parser.add_argument("--sse", action="store_true", help="Use SSE transport")
-    parser.add_argument(
-        "--streamable-http", action="store_true", help="Use StreamableHTTP transport (default)"
-    )
+    parser.add_argument("--streamable-http", action="store_true", help="Use StreamableHTTP transport (default)")
     parser.add_argument("--port", type=int, default=8888, help="Port to run the server on")
 
     args = parser.parse_args()

@@ -75,9 +75,7 @@ class BaseScraper:
             retry_delay: Delay between retry attempts in seconds
         """
         self.base_url = base_url
-        self.cache_dir = cache_dir or os.path.join(
-            os.path.expanduser(DEFAULT_CACHE_DIR), ".french_tax_mcp_cache"
-        )
+        self.cache_dir = cache_dir or os.path.join(os.path.expanduser(DEFAULT_CACHE_DIR), ".french_tax_mcp_cache")
         self.cache_expiry = cache_expiry
         self.min_request_interval = 60 / requests_per_minute
         self.timeout = timeout
@@ -129,9 +127,7 @@ class BaseScraper:
                         "Accept-Language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
                     }
 
-                    response = await client.get(
-                        full_url, headers=headers, follow_redirects=True, timeout=self.timeout
-                    )
+                    response = await client.get(full_url, headers=headers, follow_redirects=True, timeout=self.timeout)
 
                     # Update last request time
                     self.last_request_time = time.time()

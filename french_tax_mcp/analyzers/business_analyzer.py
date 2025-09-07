@@ -14,11 +14,10 @@ This module provides functions to analyze business tax scenarios for individuals
 
 import logging
 from datetime import datetime
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, Optional
 
 from french_tax_mcp.constants import (
     ACCRE_REDUCTION_RATE,
-    DECLARATION_BOXES,
     MICRO_ENTERPRISE_ABATEMENT_RATES,
     MICRO_ENTERPRISE_SOCIAL_CHARGES,
     VERSEMENT_LIBERATOIRE_RATES,
@@ -77,9 +76,7 @@ class BusinessTaxAnalyzer:
             taxable_income = annual_revenue * (1 - abatement_rate)
 
             # Calculate social charges
-            social_charges_rate = self._get_social_charges_rate(
-                activity_type, accre_eligible, tax_year
-            )
+            social_charges_rate = self._get_social_charges_rate(activity_type, accre_eligible, tax_year)
             social_charges = annual_revenue * social_charges_rate
 
             # Calculate income tax (simplified flat rate)
@@ -136,9 +133,7 @@ class BusinessTaxAnalyzer:
         """
         return MICRO_ENTERPRISE_ABATEMENT_RATES.get(activity_type, 0.0)
 
-    def _get_social_charges_rate(
-        self, activity_type: str, accre_eligible: bool, year: int
-    ) -> float:
+    def _get_social_charges_rate(self, activity_type: str, accre_eligible: bool, year: int) -> float:
         """Get social charges rate based on activity type and ACCRE eligibility.
 
         Args:
@@ -170,19 +165,31 @@ class BusinessTaxAnalyzer:
             return {
                 "forms": ["2042", "2042-C-PRO"],
                 "boxes": {"2042-C-PRO": ["5KO", "5LO"]},
-                "instructions": "Déclarez le montant total de votre chiffre d'affaires (avant abattement) dans la case 5KO (vous) ou 5LO (conjoint) de la déclaration 2042-C-PRO. L'abattement de 71% sera automatiquement appliqué.",
+                "instructions": (
+                    "Déclarez le montant total de votre chiffre d'affaires (avant abattement) "
+                    "dans la case 5KO (vous) ou 5LO (conjoint) de la déclaration 2042-C-PRO. "
+                    "L'abattement de 71% sera automatiquement appliqué."
+                ),
             }
         elif activity_type == "services":
             return {
                 "forms": ["2042", "2042-C-PRO"],
                 "boxes": {"2042-C-PRO": ["5KP", "5LP"]},
-                "instructions": "Déclarez le montant total de votre chiffre d'affaires (avant abattement) dans la case 5KP (vous) ou 5LP (conjoint) de la déclaration 2042-C-PRO. L'abattement de 50% sera automatiquement appliqué.",
+                "instructions": (
+                    "Déclarez le montant total de votre chiffre d'affaires (avant abattement) "
+                    "dans la case 5KP (vous) ou 5LP (conjoint) de la déclaration 2042-C-PRO. "
+                    "L'abattement de 50% sera automatiquement appliqué."
+                ),
             }
         elif activity_type == "liberal":
             return {
                 "forms": ["2042", "2042-C-PRO"],
                 "boxes": {"2042-C-PRO": ["5HQ", "5IQ"]},
-                "instructions": "Déclarez le montant total de vos recettes (avant abattement) dans la case 5HQ (vous) ou 5IQ (conjoint) de la déclaration 2042-C-PRO. L'abattement de 34% sera automatiquement appliqué.",
+                "instructions": (
+                    "Déclarez le montant total de vos recettes (avant abattement) "
+                    "dans la case 5HQ (vous) ou 5IQ (conjoint) de la déclaration 2042-C-PRO. "
+                    "L'abattement de 34% sera automatiquement appliqué."
+                ),
             }
         else:
             return {}
@@ -224,9 +231,7 @@ class BusinessTaxAnalyzer:
                 }
 
             # Get social charges rate based on activity type
-            social_charges_rate = self._get_ae_social_charges_rate(
-                activity_type, accre_eligible, tax_year
-            )
+            social_charges_rate = self._get_ae_social_charges_rate(activity_type, accre_eligible, tax_year)
 
             # Calculate social charges
             social_charges = annual_revenue * social_charges_rate
@@ -288,9 +293,7 @@ class BusinessTaxAnalyzer:
                 "message": f"Failed to calculate auto-entrepreneur tax: {str(e)}",
             }
 
-    def _get_ae_social_charges_rate(
-        self, activity_type: str, accre_eligible: bool, year: int
-    ) -> float:
+    def _get_ae_social_charges_rate(self, activity_type: str, accre_eligible: bool, year: int) -> float:
         """Get auto-entrepreneur social charges rate based on activity type and ACCRE eligibility.
 
         Args:
@@ -328,9 +331,7 @@ class BusinessTaxAnalyzer:
         """
         return VERSEMENT_LIBERATOIRE_RATES.get(activity_type, 0.0)
 
-    def _get_auto_entrepreneur_declaration_info(
-        self, activity_type: str, versement_liberatoire: bool
-    ) -> Dict:
+    def _get_auto_entrepreneur_declaration_info(self, activity_type: str, versement_liberatoire: bool) -> Dict:
         """Get declaration information based on activity type and versement libératoire option.
 
         Args:
@@ -344,7 +345,12 @@ class BusinessTaxAnalyzer:
             return {
                 "forms": ["2042", "2042-C-PRO"],
                 "boxes": {"2042-C-PRO": ["5TA", "5UA"]},
-                "instructions": "Cochez la case 5TA (vous) ou 5UA (conjoint) de la déclaration 2042-C-PRO pour indiquer que vous avez opté pour le versement libératoire. Vous n'avez pas à déclarer votre chiffre d'affaires sur la déclaration de revenus car l'impôt sur le revenu a déjà été payé via le versement libératoire.",
+                "instructions": (
+                    "Cochez la case 5TA (vous) ou 5UA (conjoint) de la déclaration 2042-C-PRO "
+                    "pour indiquer que vous avez opté pour le versement libératoire. "
+                    "Vous n'avez pas à déclarer votre chiffre d'affaires sur la déclaration "
+                    "de revenus car l'impôt sur le revenu a déjà été payé via le versement libératoire."
+                ),
             }
         else:
             # Same as micro-enterprise

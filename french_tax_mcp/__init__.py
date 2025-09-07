@@ -7,11 +7,7 @@
 # OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
 # and limitations under the License.
 
-"""French Tax MCP Server.
-
-A specialized MCP (Model Context Protocol) server that provides accurate, up-to-date
-French tax information by scraping official government websites and performing tax calculations.
-"""
+"""French Tax MCP Server - Tax calculations and information retrieval."""
 
 __version__ = "1.0.0"
 __author__ = "Corneliu"

@@ -255,8 +255,7 @@ class ServicePublicScraper(BaseScraper):
             heading_text = heading.get_text().lower()
 
             if any(
-                keyword in heading_text
-                for keyword in ["voir aussi", "à voir également", "en lien", "liens utiles"]
+                keyword in heading_text for keyword in ["voir aussi", "à voir également", "en lien", "liens utiles"]
             ):
                 # Found a related links section, extract links
                 for sibling in heading.next_siblings:

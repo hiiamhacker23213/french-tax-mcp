@@ -7,11 +7,7 @@
 # OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
 # and limitations under the License.
 
-"""Constants for French Tax MCP Server.
-
-This module contains all constants used throughout the application, including
-tax brackets, rates, URLs, and other configuration values.
-"""
+"""French Tax MCP Server - Tax calculations and information retrieval."""
 
 from typing import Dict, List
 

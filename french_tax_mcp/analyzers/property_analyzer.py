@@ -284,9 +284,7 @@ async def calculate_pinel_benefit(
     Returns:
         Dictionary containing Pinel benefit calculation details
     """
-    return await property_tax_analyzer.calculate_pinel_benefit(
-        property_price, commitment_period, acquisition_date
-    )
+    return await property_tax_analyzer.calculate_pinel_benefit(property_price, commitment_period, acquisition_date)
 
 
 async def calculate_lmnp_benefit(

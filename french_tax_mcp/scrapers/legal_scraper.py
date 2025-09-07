@@ -143,9 +143,7 @@ class LegalScraper(BaseScraper):
         for heading in soup.find_all(["h2", "h3", "h4"]):
             heading_text = heading.get_text().lower()
 
-            if any(
-                keyword in heading_text for keyword in ["voir aussi", "articles liés", "références"]
-            ):
+            if any(keyword in heading_text for keyword in ["voir aussi", "articles liés", "références"]):
                 # Found a related links section, extract links
                 for sibling in heading.next_siblings:
                     if sibling.name in ["h2", "h3", "h4"]:
@@ -159,9 +157,7 @@ class LegalScraper(BaseScraper):
                             article_match = re.search(r"LEGIARTI000(\d+)", href)
                             if article_match:
                                 article_id = article_match.group(1)
-                                related_articles.append(
-                                    {"article_id": article_id, "title": text, "url": href}
-                                )
+                                related_articles.append({"article_id": article_id, "title": text, "url": href})
 
         return related_articles
 
@@ -179,7 +175,38 @@ class LegalScraper(BaseScraper):
         try:
             # Construct search URL with comprehensive parameters for tax code articles
             # This includes all article types (L, R, T, A, D, M, V, etc.) and specific tax codes
-            url = f"{SEARCH_URL}/code?query={query}&corpus=CODES&typePagination=DEFAUT&pageSize=10&page=1&tab_selection=code&searchField=ALL&searchType=ALL&searchScope=CODE_ARTICLE&searchScope=CODE_ARTICLE_C&searchScope=CODE_ARTICLE_L&searchScope=CODE_ARTICLE_R&searchScope=CODE_ARTICLE_T&searchScope=CODE_ARTICLE_A&searchScope=CODE_ARTICLE_D&searchScope=CODE_ARTICLE_M&searchScope=CODE_ARTICLE_V&searchScope=CODE_ARTICLE_LO&searchScope=CODE_ARTICLE_LP&searchScope=CODE_ARTICLE_LR&searchScope=CODE_ARTICLE_LD&searchScope=CODE_ARTICLE_LM&searchScope=CODE_ARTICLE_LV&searchScope=CODE_ARTICLE_RO&searchScope=CODE_ARTICLE_RP&searchScope=CODE_ARTICLE_RR&searchScope=CODE_ARTICLE_RD&searchScope=CODE_ARTICLE_RM&searchScope=CODE_ARTICLE_RV&searchScope=CODE_ARTICLE_TO&searchScope=CODE_ARTICLE_TP&searchScope=CODE_ARTICLE_TR&searchScope=CODE_ARTICLE_TD&searchScope=CODE_ARTICLE_TM&searchScope=CODE_ARTICLE_TV&searchScope=CODE_ARTICLE_AO&searchScope=CODE_ARTICLE_AP&searchScope=CODE_ARTICLE_AR&searchScope=CODE_ARTICLE_AD&searchScope=CODE_ARTICLE_AM&searchScope=CODE_ARTICLE_AV&searchScope=CODE_ARTICLE_DO&searchScope=CODE_ARTICLE_DP&searchScope=CODE_ARTICLE_DR&searchScope=CODE_ARTICLE_DD&searchScope=CODE_ARTICLE_DM&searchScope=CODE_ARTICLE_DV&searchScope=CODE_ARTICLE_MO&searchScope=CODE_ARTICLE_MP&searchScope=CODE_ARTICLE_MR&searchScope=CODE_ARTICLE_MD&searchScope=CODE_ARTICLE_MM&searchScope=CODE_ARTICLE_MV&searchScope=CODE_ARTICLE_VO&searchScope=CODE_ARTICLE_VP&searchScope=CODE_ARTICLE_VR&searchScope=CODE_ARTICLE_VD&searchScope=CODE_ARTICLE_VM&searchScope=CODE_ARTICLE_VV&code=CGIAN2&code=CGIAN3&code=CGIAN4&code=CGICT&code=CGILEGIARTI000006308740&code=CGIPENAL&code=CGISUBDIV&code=CGITM&code=LEGITEXT000006069577"
+            # Build URL parameters
+            base_params = (
+                f"query={query}&corpus=CODES&typePagination=DEFAUT&pageSize=10&page=1"
+                "&tab_selection=code&searchField=ALL&searchType=ALL"
+            )
+            
+            # Article scope parameters (all types: L, R, T, A, D, M, V, etc.)
+            article_scopes = [
+                "CODE_ARTICLE", "CODE_ARTICLE_C", "CODE_ARTICLE_L", "CODE_ARTICLE_R",
+                "CODE_ARTICLE_T", "CODE_ARTICLE_A", "CODE_ARTICLE_D", "CODE_ARTICLE_M",
+                "CODE_ARTICLE_V", "CODE_ARTICLE_LO", "CODE_ARTICLE_LP", "CODE_ARTICLE_LR",
+                "CODE_ARTICLE_LD", "CODE_ARTICLE_LM", "CODE_ARTICLE_LV", "CODE_ARTICLE_RO",
+                "CODE_ARTICLE_RP", "CODE_ARTICLE_RR", "CODE_ARTICLE_RD", "CODE_ARTICLE_RM",
+                "CODE_ARTICLE_RV", "CODE_ARTICLE_TO", "CODE_ARTICLE_TP", "CODE_ARTICLE_TR",
+                "CODE_ARTICLE_TD", "CODE_ARTICLE_TM", "CODE_ARTICLE_TV", "CODE_ARTICLE_AO",
+                "CODE_ARTICLE_AP", "CODE_ARTICLE_AR", "CODE_ARTICLE_AD", "CODE_ARTICLE_AM",
+                "CODE_ARTICLE_AV", "CODE_ARTICLE_DO", "CODE_ARTICLE_DP", "CODE_ARTICLE_DR",
+                "CODE_ARTICLE_DD", "CODE_ARTICLE_DM", "CODE_ARTICLE_DV", "CODE_ARTICLE_MO",
+                "CODE_ARTICLE_MP", "CODE_ARTICLE_MR", "CODE_ARTICLE_MD", "CODE_ARTICLE_MM",
+                "CODE_ARTICLE_MV", "CODE_ARTICLE_VO", "CODE_ARTICLE_VP", "CODE_ARTICLE_VR",
+                "CODE_ARTICLE_VD", "CODE_ARTICLE_VM", "CODE_ARTICLE_VV"
+            ]
+            scope_params = "&".join([f"searchScope={scope}" for scope in article_scopes])
+            
+            # Code parameters
+            codes = [
+                "CGIAN2", "CGIAN3", "CGIAN4", "CGICT", "CGILEGIARTI000006308740",
+                "CGIPENAL", "CGISUBDIV", "CGITM", "LEGITEXT000006069577"
+            ]
+            code_params = "&".join([f"code={code}" for code in codes])
+            
+            url = f"{SEARCH_URL}/code?{base_params}&{scope_params}&{code_params}"
 
             # Get the page
             response = await self.get_page(url)
@@ -245,9 +272,7 @@ class LegalScraper(BaseScraper):
                 if article_match:
                     article_id = article_match.group(1)
 
-            results.append(
-                {"title": title, "url": url, "snippet": snippet, "article_id": article_id}
-            )
+            results.append({"title": title, "url": url, "snippet": snippet, "article_id": article_id})
 
         return results
 

@@ -100,15 +100,11 @@ class ReportGenerator:
         topic_lower = topic_name.lower()
 
         # Check for form guide
-        if "form" in tax_data or any(
-            keyword in topic_lower for keyword in ["form", "formulaire", "2042", "2044"]
-        ):
+        if "form" in tax_data or any(keyword in topic_lower for keyword in ["form", "formulaire", "2042", "2044"]):
             return "form_guide"
 
         # Check for tax scheme
-        if "scheme" in tax_data or any(
-            keyword in topic_lower for keyword in ["pinel", "lmnp", "scheme", "dispositif"]
-        ):
+        if "scheme" in tax_data or any(keyword in topic_lower for keyword in ["pinel", "lmnp", "scheme", "dispositif"]):
             return "tax_scheme"
 
         # Check for tax deadlines (check before calculation guide to avoid "tax" keyword conflict)
@@ -118,9 +114,7 @@ class ReportGenerator:
             return "tax_deadlines"
 
         # Check for calculation guide
-        if "calculation" in tax_data or any(
-            keyword in topic_lower for keyword in ["calcul", "impot", "tax"]
-        ):
+        if "calculation" in tax_data or any(keyword in topic_lower for keyword in ["calcul", "impot", "tax"]):
             return "calculation_guide"
 
         # Default to base report
@@ -194,9 +188,7 @@ class ReportGenerator:
                     for item in value:
                         if isinstance(item, dict):
                             for item_key, item_value in item.items():
-                                details += (
-                                    f"- **{item_key.replace('_', ' ').title()}**: {item_value}\n"
-                                )
+                                details += f"- **{item_key.replace('_', ' ').title()}**: {item_value}\n"
                             details += "\n"
                         else:
                             details += f"- {item}\n"
@@ -343,14 +335,10 @@ class ReportGenerator:
             important_boxes = "Aucune case importante spécifiée."
 
         # Extract supporting documents
-        supporting_documents = tax_data.get(
-            "supporting_documents", "Aucun document justificatif spécifié."
-        )
+        supporting_documents = tax_data.get("supporting_documents", "Aucun document justificatif spécifié.")
 
         # Extract deadline
-        deadline = tax_data.get(
-            "deadline", "Consultez le calendrier fiscal pour connaître la date limite de dépôt."
-        )
+        deadline = tax_data.get("deadline", "Consultez le calendrier fiscal pour connaître la date limite de dépôt.")
 
         # Extract related forms
         related_forms = ""
@@ -609,9 +597,7 @@ class ReportGenerator:
                         for item in value:
                             if isinstance(item, dict):
                                 for item_key, item_value in item.items():
-                                    writer.writerow(
-                                        ["", item_key.replace("_", " ").title(), item_value]
-                                    )
+                                    writer.writerow(["", item_key.replace("_", " ").title(), item_value])
                                 writer.writerow(["", ""])
                             else:
                                 writer.writerow(["", item])
