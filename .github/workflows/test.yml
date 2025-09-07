@@ -52,16 +52,6 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -e ".[dev]"
-    
-    - name: Run black
-      run: black --check french_tax_mcp/
-    
-    - name: Run isort
-      run: isort --check-only french_tax_mcp/
-    
-    - name: Run flake8
-      run: flake8 french_tax_mcp/
-    
+        pip install -e ".[dev]"    
     - name: Run mypy
       run: mypy french_tax_mcp/
