@@ -27,12 +27,13 @@ from french_tax_mcp.analyzers.property_analyzer import (
     calculate_pinel_benefit,
 )
 from french_tax_mcp.report_generator import generate_tax_report
-from french_tax_mcp.scrapers.impots_scraper import get_form_info, get_tax_brackets
-from french_tax_mcp.scrapers.legal_scraper import get_tax_article, search_tax_law
-from french_tax_mcp.scrapers.service_public_scraper import (
-    get_tax_deadlines,
-    get_tax_procedure,
-)
+# Import scrapers lazily to avoid initialization delays
+# from french_tax_mcp.scrapers.impots_scraper import get_form_info, get_tax_brackets
+# from french_tax_mcp.scrapers.legal_scraper import get_tax_article, search_tax_law
+# from french_tax_mcp.scrapers.service_public_scraper import (
+#     get_tax_deadlines,
+#     get_tax_procedure,
+# )
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -109,7 +110,8 @@ async def get_tax_info_from_web(tax_topic: str, ctx: Context, year: Optional[int
 
         # Map topic to appropriate scraper
         if tax_topic.lower() in ["tranches_impot", "baremes", "tax_brackets"]:
-            # Use tax brackets scraper
+            # Use tax brackets scraper (lazy import)
+            from french_tax_mcp.scrapers.impots_scraper import get_tax_brackets
             result = await get_tax_brackets(year)
             return result
         else:
@@ -151,7 +153,8 @@ async def get_tax_brackets_wrapper(ctx: Context, year: Optional[int] = None) -> 
 
         await ctx.info(f"Retrieving tax brackets for year {year}")
 
-        # Call the implementation from impots_scraper.py
+        # Call the implementation from impots_scraper.py (lazy import)
+        from french_tax_mcp.scrapers.impots_scraper import get_tax_brackets
         result = await get_tax_brackets(year)
         return result
     except Exception as e:
@@ -352,6 +355,7 @@ async def get_form_details_wrapper(form_number: str, ctx: Context, year: Optiona
 
         # Try to get information from the scraper first
         try:
+            from french_tax_mcp.scrapers.impots_scraper import get_form_info
             result = await get_form_info(form_number, year)
             if result.get("status") == "success":
                 return result
@@ -486,7 +490,7 @@ async def get_cached_tax_info(tax_topic: str, ctx: Context, year: Optional[int] 
 
         # Map topic to appropriate cached data
         if tax_topic.lower() in ["tranches_impot", "baremes", "tax_brackets"]:
-            # Use tax brackets fallback data
+            # Use tax brackets fallback data (lazy import)
             from french_tax_mcp.scrapers.impots_scraper import ImpotsScraper
 
             scraper = ImpotsScraper()
@@ -692,6 +696,7 @@ async def get_tax_procedure_wrapper(
         if ctx:
             await ctx.info(f"Getting tax procedure information for {procedure_name}")
 
+        from french_tax_mcp.scrapers.service_public_scraper import get_tax_procedure
         result = await get_tax_procedure(procedure_name)
         return result
     except Exception as e:
@@ -724,6 +729,7 @@ async def get_tax_deadlines_wrapper(
         if ctx:
             await ctx.info(f"Getting tax deadlines for year {year or 'current'}")
 
+        from french_tax_mcp.scrapers.service_public_scraper import get_tax_deadlines
         result = await get_tax_deadlines(year)
         return result
     except Exception as e:
@@ -733,6 +739,33 @@ async def get_tax_deadlines_wrapper(
             "status": "error",
             "message": f"Error getting tax deadlines: {str(e)}",
         }
+
+
+@mcp.tool(
+    name="health_check",
+    description="Simple health check to verify the server is responsive",
+)
+async def health_check(ctx: Optional[Context] = None) -> Dict:
+    """Simple health check to verify the server is responsive.
+    
+    Returns:
+        Dict: Status information about the server
+    """
+    if ctx:
+        await ctx.info("Health check requested")
+    
+    return {
+        "status": "success",
+        "message": "French Tax MCP Server is running",
+        "timestamp": datetime.now().isoformat(),
+        "available_tools": [
+            "calculate_income_tax",
+            "get_tax_brackets", 
+            "get_scheme_details",
+            "calculate_pinel_benefit",
+            "calculate_lmnp_benefit"
+        ]
+    }
 
 
 @mcp.tool(
