@@ -67,11 +67,6 @@ jobs:
   publish:
     needs: build
     runs-on: ubuntu-latest
-    environment:
-      name: ${{ github.event.inputs.test_pypi == 'true' && 'test-pypi' || 'pypi' }}
-      url: ${{ github.event.inputs.test_pypi == 'true' && 'https://test.pypi.org/p/french-tax-mcp' || 'https://pypi.org/p/french-tax-mcp' }}
-    permissions:
-      id-token: write # IMPORTANT: this permission is mandatory for trusted publishing
 
     steps:
       - name: Download build artifacts
@@ -85,10 +80,12 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
           verbose: true
 
       - name: Publish to PyPI
         if: github.event.inputs.test_pypi != 'true'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
           verbose: true
