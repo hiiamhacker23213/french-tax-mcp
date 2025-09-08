@@ -21,7 +21,7 @@ SERVICE_PUBLIC_BASE_URL = "https://www.service-public.fr"
 LEGIFRANCE_BASE_URL = "https://www.legifrance.gouv.fr"
 
 # Specific page URLs
-IMPOTS_BRACKETS_URL = "/particulier/baremes-impot-revenu"
+TAX_BRACKETS_URL = "https://www.service-public.fr/particuliers/vosdroits/F1419"
 IMPOTS_FORMS_BASE_URL = "/formulaires"
 IMPOTS_PINEL_URL = "/particulier/questions/comment-beneficier-du-dispositif-pinel"
 IMPOTS_LMNP_URL = "/particulier/questions/comment-declarer-mes-revenus-de-location-meublee"
@@ -64,78 +64,28 @@ TAX_BRACKETS = {
 }
 
 # =============================================================================
-# PINEL RATES BY YEAR AND COMMITMENT PERIOD
+# HOUSEHOLD COMPOSITION FOR QUOTIENT FAMILIAL
 # =============================================================================
 
-PINEL_RATES = {
-    # 2025 and beyond (reduced rates)
-    2025: {6: 0.09, 9: 0.12, 12: 0.14},  # 9%  # 12%  # 14%
-    # 2023-2024
-    2023: {6: 0.105, 9: 0.15, 12: 0.175},  # 10.5%  # 15%  # 17.5%
-    2024: {6: 0.105, 9: 0.15, 12: 0.175},  # 10.5%  # 15%  # 17.5%
-    # 2021-2022
-    2021: {6: 0.12, 9: 0.18, 12: 0.21},  # 12%  # 18%  # 21%
-    2022: {6: 0.12, 9: 0.18, 12: 0.21},  # 12%  # 18%  # 21%
-    # Pre-2021 (default)
-    "default": {6: 0.12, 9: 0.18, 12: 0.21},  # 12%  # 18%  # 21%
+# Base household parts
+HOUSEHOLD_PARTS_BASE = {
+    "single": 1.0,
+    "divorced": 1.0,
+    "widowed": 1.0,
+    "married": 2.0,
+    "civil_union": 2.0,  # PACS
 }
 
-# Maximum Pinel investment amount
-PINEL_MAX_INVESTMENT = 300000  # €300,000
-PINEL_MAX_PRICE_PER_M2 = 5500  # €5,500/m²
-
-# =============================================================================
-# MICRO-ENTERPRISE AND AUTO-ENTREPRENEUR RATES
-# =============================================================================
-
-# Abatement rates by activity type
-MICRO_ENTERPRISE_ABATEMENT_RATES = {
-    "commercial": 0.71,  # 71%
-    "services": 0.50,  # 50%
-    "liberal": 0.34,  # 34%
+# Additional parts for children
+HOUSEHOLD_PARTS_CHILDREN = {
+    0: 0.0,
+    1: 0.5,
+    2: 1.0,
+    3: 2.0,  # Third child and beyond: 1 full part each
 }
 
-# Social charges rates by activity type (2024)
-MICRO_ENTERPRISE_SOCIAL_CHARGES = {
-    "commercial": 0.128,  # 12.8%
-    "services": 0.22,  # 22%
-    "liberal": 0.22,  # 22%
-}
-
-# Versement libératoire rates by activity type
-VERSEMENT_LIBERATOIRE_RATES = {
-    "commercial": 0.01,  # 1%
-    "services": 0.017,  # 1.7%
-    "liberal": 0.027,  # 2.7%
-}
-
-# Revenue thresholds for micro-enterprise regime
-MICRO_ENTERPRISE_THRESHOLDS = {
-    "commercial": 188700,  # €188,700
-    "services": 77700,  # €77,700
-    "liberal": 77700,  # €77,700
-}
-
-# ACCRE reduction rate
-ACCRE_REDUCTION_RATE = 0.5  # 50% reduction in first year
-
-# =============================================================================
-# LMNP (LOCATION MEUBLÉE NON PROFESSIONNELLE) CONSTANTS
-# =============================================================================
-
-# LMNP micro-BIC abatement rate
-LMNP_MICRO_ABATEMENT_RATE = 0.50  # 50%
-
-# LMNP micro-BIC threshold
-LMNP_MICRO_THRESHOLD = 72600  # €72,600
-
-# LMNP depreciation periods
-LMNP_PROPERTY_DEPRECIATION_YEARS = 30
-LMNP_FURNITURE_DEPRECIATION_YEARS = 7
-
-# LMNP professional thresholds
-LMNP_PROFESSIONAL_REVENUE_THRESHOLD = 23000  # €23,000
-LMNP_PROFESSIONAL_PERCENTAGE_THRESHOLD = 0.50  # 50% of household income
+# Additional parts for disabled dependents
+HOUSEHOLD_PARTS_DISABLED = 0.5  # 0.5 parts per disabled dependent
 
 # =============================================================================
 # TAX FORMS AND DECLARATIONS

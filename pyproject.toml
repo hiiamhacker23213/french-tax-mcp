@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "french-tax-mcp"
-version = "1.0.2"
+version = "1.1.0"
 description = "MCP server for French tax calculations and information"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -46,6 +46,7 @@ dependencies = [
     "httpx>=0.24.0",
     "pydantic>=2.0.0",
     "lxml>=4.9.0",
+    "markitdown>=0.1.3",
 ]
 
 [project.optional-dependencies]

@@ -30,10 +30,6 @@ from french_tax_mcp.constants import (
     ERROR_MESSAGES,
 )
 from french_tax_mcp.constants import IMPOTS_BASE_URL as BASE_URL
-from french_tax_mcp.constants import IMPOTS_BRACKETS_URL as BRACKETS_URL
-from french_tax_mcp.constants import IMPOTS_FORMS_BASE_URL as FORMS_BASE_URL
-from french_tax_mcp.constants import IMPOTS_LMNP_URL as LMNP_URL
-from french_tax_mcp.constants import IMPOTS_PINEL_URL as PINEL_URL
 from french_tax_mcp.constants import (
     SUCCESS_MESSAGES,
     TAX_BRACKETS,
@@ -475,15 +471,87 @@ impots_scraper = ImpotsScraper()
 
 
 async def get_tax_brackets(year: Optional[int] = None) -> Dict:
-    """Scrape income tax brackets from impots.gouv.fr.
+    """Get income tax brackets using MarkItDown scraper with fallback to hardcoded data.
 
     Args:
-        year: The tax year to retrieve brackets for. Defaults to current year.
+        year: Tax year (defaults to current year)
 
     Returns:
         Dictionary containing the tax brackets and rates
     """
-    return await impots_scraper.get_tax_brackets(year)
+    try:
+        # Try MarkItDown scraper first (more reliable)
+        from markitdown import MarkItDown
+        
+        md = MarkItDown()
+        url = "https://www.service-public.fr/particuliers/vosdroits/F1419"
+        
+        logger.info(f"Fetching tax brackets using MarkItDown from {url}")
+        result = md.convert_url(url)
+        brackets = _parse_brackets_from_markdown(result.text_content)
+        
+        if brackets:
+            current_year = year or datetime.now().year
+            logger.info(f"Successfully parsed {len(brackets)} tax brackets using MarkItDown")
+            return {
+                "status": "success",
+                "data": {
+                    "year": current_year,
+                    "brackets": brackets
+                },
+                "source": "service-public.fr (MarkItDown)"
+            }
+        
+        # Fallback to hardcoded data
+        logger.warning("MarkItDown parsing failed, using hardcoded tax brackets")
+        return _get_fallback_tax_brackets(year)
+        
+    except Exception as e:
+        logger.error(f"MarkItDown scraping failed: {e}")
+        return _get_fallback_tax_brackets(year)
+
+
+def _parse_brackets_from_markdown(content: str) -> List[Dict]:
+    """Parse tax brackets from markdown content."""
+    brackets = []
+    
+    # Pattern for tax bracket tables: "De X € à Y € | Z%"
+    pattern = r'(\d+(?:\s\d+)*)\s*€.*?(\d+(?:\s\d+)*)\s*€.*?(\d+(?:,\d+)?)\s*%'
+    matches = re.findall(pattern, content)
+    
+    for match in matches:
+        try:
+            min_str, max_str, rate_str = match
+            min_amount = int(min_str.replace(' ', ''))
+            max_amount = int(max_str.replace(' ', '')) if max_str != '∞' else None
+            rate = float(rate_str.replace(',', '.'))
+            
+            brackets.append({
+                "min": min_amount,
+                "max": max_amount,
+                "rate": rate
+            })
+        except ValueError:
+            continue
+    
+    return brackets[:5]  # Limit to reasonable number
+
+
+def _get_fallback_tax_brackets(year: Optional[int] = None) -> Dict:
+    """Get hardcoded tax brackets as fallback."""
+    from french_tax_mcp.constants import TAX_BRACKETS
+    
+    current_year = year or datetime.now().year
+    brackets = TAX_BRACKETS.get(current_year, TAX_BRACKETS.get(2024, []))
+    
+    return {
+        "status": "success",
+        "data": {
+            "year": current_year,
+            "brackets": brackets
+        },
+        "source": "hardcoded (fallback)"
+    }
 
 
 async def get_form_info(form_number: str, year: Optional[int] = None) -> Dict:

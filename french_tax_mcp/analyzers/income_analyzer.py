@@ -74,6 +74,10 @@ class IncomeTaxAnalyzer:
 
             # Calculate income tax
             tax_result = self._calculate_tax(net_taxable_income, household_parts, brackets)
+            
+            # Log data source
+            data_source = brackets_response.get("source", "unknown")
+            logger.info(f"Tax calculation completed using data from: {data_source}")
 
             return {
                 "status": "success",
@@ -87,8 +91,9 @@ class IncomeTaxAnalyzer:
                     "average_tax_rate": tax_result["average_tax_rate"],
                     "marginal_tax_rate": tax_result["marginal_tax_rate"],
                     "bracket_details": tax_result["bracket_details"],
+                    "brackets_source": data_source,
                 },
-                "message": f"Successfully calculated income tax for {tax_year}",
+                "message": f"Successfully calculated income tax for {tax_year} using {data_source}",
             }
 
         except Exception as e:

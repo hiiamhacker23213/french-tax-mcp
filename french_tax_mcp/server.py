@@ -20,12 +20,9 @@ from typing import Any, Dict, Optional
 from mcp.server.fastmcp import Context, FastMCP
 from pydantic import BaseModel, Field
 
-from french_tax_mcp.analyzers.business_analyzer import calculate_micro_enterprise_tax
+# Removed business_analyzer import - keeping only individual income tax
 from french_tax_mcp.analyzers.income_analyzer import calculate_income_tax
-from french_tax_mcp.analyzers.property_analyzer import (
-    calculate_lmnp_benefit,
-    calculate_pinel_benefit,
-)
+# Removed property_analyzer import - keeping only individual income tax
 from french_tax_mcp.report_generator import generate_tax_report
 # Import scrapers lazily to avoid initialization delays
 # from french_tax_mcp.scrapers.impots_scraper import get_form_info, get_tax_brackets
@@ -52,9 +49,9 @@ mcp = FastMCP(
     2. Fallback Mechanism:
        - If web scraping fails, MUST use get_cached_tax_info() to fetch previously cached data
 
-    3. For Specific Tax Schemes:
-       - When analyzing specific tax schemes (Pinel, LMNP, etc.), MUST use get_scheme_details()
-       - This provides critical rules, eligibility criteria, and calculation methods
+    3. For Individual Income Tax Information:
+       - Use get_tax_brackets() for current tax brackets
+       - Use calculate_income_tax() for tax calculations
 
     4. Report Generation:
        - MUST generate tax information report using retrieved data via generate_tax_report()
@@ -165,170 +162,6 @@ async def get_tax_brackets_wrapper(ctx: Context, year: Optional[int] = None) -> 
             "year": year,
         }
 
-
-@mcp.tool(
-    name="get_scheme_details",
-    description="Get detailed information about a specific tax scheme like Pinel, LMNP, etc.",
-)
-async def get_scheme_details_wrapper(scheme_name: str, ctx: Context, year: Optional[int] = None) -> Optional[Dict]:
-    """Get detailed information about a specific tax scheme.
-
-    Args:
-        scheme_name: Name of the tax scheme (e.g., 'pinel', 'lmnp', 'ptz')
-        year: Tax year (defaults to current year if not specified)
-        ctx: MCP context for logging and state management
-
-    Returns:
-        Dict: Dictionary containing detailed information about the tax scheme
-    """
-    try:
-        # Set default year to current year if not specified
-        if year is None:
-            year = datetime.now().year
-
-        await ctx.info(f"Retrieving details for scheme {scheme_name} for year {year}")
-
-        # Try to get information from the scraper first
-        try:
-            # Use fallback data since web scraping is not implemented yet
-            result = None
-            if result.get("status") == "success":
-                return result
-        except Exception as e:
-            await ctx.warning(f"Failed to get scheme details from web: {e}. Using fallback data.")
-
-        # If web scraping fails or returns an error, use fallback data
-        scheme_name = scheme_name.lower()
-
-        # Provide fallback data for known schemes
-        if scheme_name == "lmnp":
-            return {
-                "status": "success",
-                "message": f"Retrieved fallback information for LMNP scheme for {year}",
-                "data": {
-                    "scheme": "LMNP (Location Meublée Non Professionnelle)",
-                    "year": year,
-                    "description": "Le statut de Loueur en Meublé Non Professionnel (LMNP) permet de percevoir des revenus locatifs issus de la location meublée non professionnelle.",
-                    "eligibility": [
-                        "Louer un logement meublé",
-                        "Les recettes annuelles de location meublée ne dépassent pas 23 000 € ou ne représentent pas plus de 50% des revenus du foyer fiscal",
-                        "Ne pas être inscrit au Registre du Commerce et des Sociétés (RCS) en tant que loueur professionnel",
-                    ],
-                    "advantages": [
-                        "Amortissement du bien immobilier et des meubles",
-                        "Déduction des charges liées à la location",
-                        "Possibilité d'opter pour le régime micro-BIC si les recettes sont inférieures à 72 600 €",
-                        "Pas de cotisations sociales sur les revenus locatifs",
-                    ],
-                    "taxation": {
-                        "regime_reel": "Imposition sur le bénéfice après déduction des charges et amortissements",
-                        "micro_bic": "Abattement forfaitaire de 50% sur les recettes brutes",
-                    },
-                    "declaration": {
-                        "forms": ["2042", "2042-C-PRO", "2031 (régime réel)"],
-                        "deadline": "31 mai (déclaration en ligne)",
-                    },
-                    "recent_changes": [
-                        f"Pour {year}, le plafond du régime micro-BIC reste fixé à 72 600 €",
-                        "La déduction des intérêts d'emprunt reste possible en LMNP",
-                    ],
-                },
-                "source": "Fallback data",
-            }
-        elif scheme_name == "pinel":
-            return {
-                "status": "success",
-                "message": f"Retrieved fallback information for Pinel scheme for {year}",
-                "data": {
-                    "scheme": "Dispositif Pinel",
-                    "year": year,
-                    "description": "Le dispositif Pinel est un mécanisme de défiscalisation immobilière permettant de bénéficier d'une réduction d'impôt pour l'investissement dans un logement neuf destiné à la location.",
-                    "eligibility": [
-                        "Acquérir un logement neuf ou en VEFA (Vente en l'État Futur d'Achèvement)",
-                        "Louer le logement nu comme résidence principale",
-                        "Respecter des plafonds de loyers et de ressources des locataires",
-                        "Engagement de location de 6, 9 ou 12 ans",
-                        "Respect des normes énergétiques (RE2020 ou BBC)",
-                    ],
-                    "advantages": [
-                        "Réduction d'impôt de 10.5% pour 6 ans, 15% pour 9 ans, 17.5% pour 12 ans (taux 2023-2024)",
-                        "Pour 2025, réduction à 9% pour 6 ans, 12% pour 9 ans, 14% pour 12 ans",
-                        "Plafond d'investissement de 300 000 € et 5 500 €/m²",
-                    ],
-                    "zones": {
-                        "A bis": "Paris et communes limitrophes",
-                        "A": "Grande couronne parisienne, Côte d'Azur, Genevois français",
-                        "B1": "Grandes agglomérations et villes chères",
-                        "B2 et C": "Non éligibles depuis 2018 (sauf dérogation)",
-                    },
-                    "declaration": {
-                        "forms": ["2042", "2042-C"],
-                        "deadline": "31 mai (déclaration en ligne)",
-                    },
-                    "recent_changes": [
-                        f"Pour {year}, le dispositif Pinel est en phase de réduction progressive",
-                        "Le dispositif Pinel+ (ou Pinel Denormandie) offre des taux plus avantageux pour les logements respectant des critères de performance énergétique supérieurs",
-                    ],
-                },
-                "source": "Fallback data",
-            }
-        elif scheme_name in ["lmp", "loueur_meuble_professionnel"]:
-            return {
-                "status": "success",
-                "message": f"Retrieved fallback information for LMP scheme for {year}",
-                "data": {
-                    "scheme": "LMP (Loueur en Meublé Professionnel)",
-                    "year": year,
-                    "description": "Le statut de Loueur en Meublé Professionnel (LMP) concerne les personnes qui exercent l'activité de location meublée à titre professionnel.",
-                    "eligibility": [
-                        "Les recettes annuelles de location meublée dépassent 23 000 €",
-                        "Ces recettes représentent plus de 50% des revenus du foyer fiscal",
-                        "Inscription au Registre du Commerce et des Sociétés (RCS)",
-                    ],
-                    "advantages": [
-                        "Amortissement du bien immobilier et des meubles",
-                        "Déduction de toutes les charges liées à l'activité",
-                        "Imputation des déficits sur le revenu global",
-                        "Exonération des plus-values sous conditions",
-                    ],
-                    "taxation": {
-                        "regime": "Bénéfices Industriels et Commerciaux (BIC)",
-                        "cotisations_sociales": "Assujettissement aux cotisations sociales des travailleurs indépendants",
-                    },
-                    "declaration": {
-                        "forms": ["2042", "2042-C-PRO", "2031"],
-                        "deadline": "31 mai (déclaration en ligne)",
-                    },
-                    "recent_changes": [
-                        f"Pour {year}, les critères de qualification du LMP restent inchangés",
-                        "Vigilance sur la requalification en activité commerciale par l'administration fiscale",
-                    ],
-                },
-                "source": "Fallback data",
-            }
-        else:
-            # For unknown schemes, return a more informative error
-            return {
-                "status": "error",
-                "message": f"Information for scheme {scheme_name} not available",
-                "scheme": scheme_name,
-                "year": year,
-                "available_schemes": ["lmnp", "pinel", "lmp"],
-            }
-    except Exception as e:
-        await ctx.error(f"Failed to get scheme details: {e}")
-        return {
-            "status": "error",
-            "message": f"Error retrieving scheme details: {str(e)}",
-            "scheme": scheme_name,
-            "year": year,
-        }
-        return {
-            "status": "error",
-            "message": f"Error retrieving scheme details: {str(e)}",
-            "scheme": scheme_name,
-            "year": year,
-        }
 
 
 @mcp.tool(
@@ -561,117 +394,9 @@ async def calculate_income_tax_wrapper(
         }
 
 
-@mcp.tool(
-    name="calculate_pinel_benefit",
-    description="Calculate Pinel tax benefit for real estate investment",
-)
-async def calculate_pinel_benefit_wrapper(
-    property_price: float,
-    commitment_period: int,
-    acquisition_date: str,
-    ctx: Optional[Context] = None,
-) -> Optional[Dict]:
-    """Calculate Pinel tax benefit based on property price and commitment period.
-
-    Args:
-        property_price: Property price in euros
-        commitment_period: Commitment period in years (6, 9, or 12)
-        acquisition_date: Acquisition date in format 'YYYY-MM-DD'
-        ctx: MCP context for logging
-
-    Returns:
-        Dict: Dictionary containing Pinel benefit calculation details
-    """
-    try:
-        if ctx:
-            await ctx.info(f"Calculating Pinel benefit for {property_price}€ property")
-
-        result = await calculate_pinel_benefit(property_price, commitment_period, acquisition_date)
-        return result
-    except Exception as e:
-        if ctx:
-            await ctx.error(f"Failed to calculate Pinel benefit: {e}")
-        return {
-            "status": "error",
-            "message": f"Error calculating Pinel benefit: {str(e)}",
-        }
-
-
-@mcp.tool(
-    name="calculate_lmnp_benefit",
-    description="Calculate LMNP (furnished rental) tax benefit",
-)
-async def calculate_lmnp_benefit_wrapper(
-    annual_rent: float,
-    expenses: float = 0,
-    property_value: float = 0,
-    furniture_value: float = 0,
-    regime: str = "micro",
-    ctx: Optional[Context] = None,
-) -> Optional[Dict]:
-    """Calculate LMNP (Location Meublée Non Professionnelle) tax benefit.
-
-    Args:
-        annual_rent: Annual rental income in euros
-        expenses: Annual expenses in euros (only used for 'reel' regime)
-        property_value: Property value in euros (only used for 'reel' regime)
-        furniture_value: Furniture value in euros (only used for 'reel' regime)
-        regime: Tax regime ('micro' or 'reel')
-        ctx: MCP context for logging
-
-    Returns:
-        Dict: Dictionary containing LMNP benefit calculation details
-    """
-    try:
-        if ctx:
-            await ctx.info(f"Calculating LMNP benefit for {annual_rent}€ annual rent")
-
-        result = await calculate_lmnp_benefit(annual_rent, expenses, property_value, furniture_value, regime)
-        return result
-    except Exception as e:
-        if ctx:
-            await ctx.error(f"Failed to calculate LMNP benefit: {e}")
         return {
             "status": "error",
             "message": f"Error calculating LMNP benefit: {str(e)}",
-        }
-
-
-@mcp.tool(
-    name="calculate_micro_enterprise_tax",
-    description="Calculate taxes for micro-enterprise regime",
-)
-async def calculate_micro_enterprise_tax_wrapper(
-    annual_revenue: float,
-    activity_type: str,
-    accre_eligible: bool = False,
-    year: Optional[int] = None,
-    ctx: Optional[Context] = None,
-) -> Optional[Dict]:
-    """Calculate taxes for micro-enterprise regime.
-
-    Args:
-        annual_revenue: Annual revenue in euros
-        activity_type: Type of activity ('commercial', 'services', 'liberal')
-        accre_eligible: Whether eligible for ACCRE (first-year entrepreneur)
-        year: Tax year (defaults to current year)
-        ctx: MCP context for logging
-
-    Returns:
-        Dict: Dictionary containing tax calculation details
-    """
-    try:
-        if ctx:
-            await ctx.info(f"Calculating micro-enterprise tax for {annual_revenue}€ {activity_type} activity")
-
-        result = await calculate_micro_enterprise_tax(annual_revenue, activity_type, accre_eligible, year)
-        return result
-    except Exception as e:
-        if ctx:
-            await ctx.error(f"Failed to calculate micro-enterprise tax: {e}")
-        return {
-            "status": "error",
-            "message": f"Error calculating micro-enterprise tax: {str(e)}",
         }
 
 
