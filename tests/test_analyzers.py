@@ -15,9 +15,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from french_tax_mcp.analyzers.business_analyzer import BusinessTaxAnalyzer
 from french_tax_mcp.analyzers.income_analyzer import IncomeTaxAnalyzer
-from french_tax_mcp.analyzers.property_analyzer import PropertyTaxAnalyzer
 
 
 class TestIncomeTaxAnalyzer:
